@@ -1,0 +1,10 @@
+0 airplane
+1 bus
+2 cat
+3 clock
+4 fish
+5 flower
+6 key
+7 spider
+8 star
+9 tree
