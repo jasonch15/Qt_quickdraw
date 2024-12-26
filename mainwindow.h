@@ -1,23 +1,54 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPainter>
+#include <QMouseEvent>
+#include <QColorDialog>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QSlider>
+#include <QLabel>
+#include <QFileDialog>
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
+class Canvas : public QWidget {
+    Q_OBJECT
 
-class MainWindow : public QMainWindow
-{
+public:
+    explicit Canvas(QWidget *parent = nullptr);
+    void setBrushColor(const QColor &color);
+    void setBrushSize(int size);
+    void setEraser();
+    QPixmap getPixmap() const;
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
+
+private:
+    QPixmap pixmap;
+    QColor brushColor;
+    int brushSize;
+    QPoint lastPos;
+    bool drawing;
+};
+
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void chooseColor();
+    void saveCanvas();
+
 private:
-    Ui::MainWindow *ui;
+    Canvas *canvas;
 };
+
 #endif // MAINWINDOW_H
