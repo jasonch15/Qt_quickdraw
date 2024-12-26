@@ -1,0 +1,1 @@
+Image: cat.png | Predicted Class: cat | Confidence: 1.00 | Result: yes
