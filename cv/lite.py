@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image, ImageOps
 import os
+import shutil  # 用於移動檔案
 
 # 禁用科學記號
 np.set_printoptions(suppress=True)
@@ -41,7 +42,10 @@ def predict_image(image_path):
     return index, confidence_score
 
 # 核心邏輯
-def process_single_image(folder_path, class_names_file, result_file):
+def process_single_image(folder_path, class_names_file, result_file, result_folder):
+    # 確保 result_folder 存在
+    os.makedirs(result_folder, exist_ok=True)
+
     # 載入標籤，忽略數字部分
     class_names = [line.strip().split(" ", 1)[1].lower() for line in open(class_names_file, "r").readlines()]
 
@@ -63,20 +67,20 @@ def process_single_image(folder_path, class_names_file, result_file):
     print(f"檔名: {file_name_without_extension}, 預測類別: {class_name}")  # 調試輸出
     result = "yes" if file_name_without_extension == class_name else "no"
 
-    # 將結果寫入 result.txt
-    with open(result_file, "w") as f:
+    # 將結果追加寫入 result.txt
+    with open(result_file, "a") as f:  # 使用 'a' 模式以追加內容
         f.write(f"Image: {image_file} | Predicted Class: {class_name} | Confidence: {confidence_score:.2f} | Result: {result}\n")
-    print(f"結果已寫入 {result_file}：{result}")
+    print(f"結果已追加到 {result_file}：{result}")
 
-    # 清空 images 資料夾
-    for f in image_files:
-        os.remove(os.path.join(folder_path, f))
-    print(f"{folder_path} 資料夾已清空。")
+    # 移動圖片到 result_folder
+    shutil.move(image_path, os.path.join(result_folder, image_file))
+    print(f"{image_file} 已移動到 {result_folder}。")
 
 # 主程式
 if __name__ == "__main__":
     image_folder = "images"  # 圖片資料夾路徑
     class_names_file = "labels.txt"  # 標籤檔案
     result_file = "result.txt"  # 結果輸出檔案
+    result_folder = "resultfile"  # 辨識後圖片的儲存資料夾
 
-    process_single_image(image_folder, class_names_file, result_file)
+    process_single_image(image_folder, class_names_file, result_file, result_folder)
