@@ -1,7 +1,7 @@
 ﻿#include "mainwindow.h"
 
 Canvas::Canvas(QWidget *parent) : QWidget(parent), drawing(false) {
-    setFixedSize(600, 400); // 畫布大小
+    setFixedSize(900, 600); // 畫布大小
     pixmap = QPixmap(size());
     pixmap.fill(Qt::white);
     brushColor = Qt::black;
@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 初始化倒計時顯示
     timeLabel = new QLabel("倒數時間：30", this);
     timeLabel->setAlignment(Qt::AlignCenter);
-    timeLabel->setStyleSheet("font-size: 18px; color: red;");
+    timeLabel->setStyleSheet("font-size: 30px; color: white;");
     timeLabel->hide(); // 開始遊戲前隱藏
 
     // 初始化題目池
@@ -89,10 +89,26 @@ MainWindow::MainWindow(QWidget *parent)
     // 顯示題目的標籤
     questionLabel = new QLabel("題目：", this);
     questionLabel->setAlignment(Qt::AlignCenter);
+
+    // 設置字體大小並加粗
+    QFont font = questionLabel->font();
+    font.setPointSize(30);  // 設置字體大小為 20
+    font.setBold(true);     // 設置字體加粗
+    questionLabel->setFont(font);
+
     questionLabel->hide(); // 開始遊戲前隱藏
+
 
     // 調色盤按鈕
     auto *colorButton = new QPushButton("調色盤");
+    colorButton->setStyleSheet("QPushButton {"
+                              "border: 2px solid white;"   // 白色邊框
+                              "background-color: yellow;"  // 黃色背景
+                              "color: black;"              // 黑色文字
+                              "font-size: 20px;"           // 文字大小
+                              "padding: 5px 10px;"         // 按鈕內邊距
+                              "border-radius: 5px;"        // 圓角邊框
+                              "}");
     connect(colorButton, &QPushButton::clicked, this, &MainWindow::chooseColor);
     controls->addWidget(colorButton);
     colorButton->hide(); // 開始遊戲前隱藏
@@ -102,30 +118,65 @@ MainWindow::MainWindow(QWidget *parent)
     auto *sizeSlider = new QSlider(Qt::Horizontal);
     sizeSlider->setRange(1, 30);
     sizeSlider->setValue(5);
+
+    // 設置字體大小並加粗
+    QFont fontsize = sizeLabel->font();
+    fontsize.setPointSize(18);  // 設置字體大小為 18
+    sizeLabel->setFont(fontsize);
+
     connect(sizeSlider, &QSlider::valueChanged, [this, sizeLabel](int value) {
         sizeLabel->setText("粗細: " + QString::number(value));
         canvas->setBrushSize(value);
     });
+
     controls->addWidget(sizeLabel);
     controls->addWidget(sizeSlider);
+
+    // 開始遊戲前隱藏滑塊和顯示的標籤
     sizeLabel->hide();
     sizeSlider->hide();
 
+
     // 保存按鈕
     auto *saveButton = new QPushButton("保存");
+    saveButton->setStyleSheet("QPushButton {"
+                              "border: 2px solid white;"   // 白色邊框
+                              "background-color: yellow;"  // 黃色背景
+                              "color: black;"              // 黑色文字
+                              "font-size: 20px;"           // 文字大小
+                              "padding: 5px 10px;"         // 按鈕內邊距
+                              "border-radius: 5px;"        // 圓角邊框
+                              "}");
     connect(saveButton, &QPushButton::clicked, this, &MainWindow::saveCanvas);
     controls->addWidget(saveButton);
     saveButton->hide();
 
     // 清除畫布按鈕
     auto *clearButton = new QPushButton("清除畫布");
+    clearButton->setStyleSheet("QPushButton {"
+                               "border: 2px solid white;"   // 白色邊框
+                               "background-color: yellow;"  // 黃色背景
+                               "color: black;"              // 黑色文字
+                               "font-size: 20px;"           // 文字大小
+                               "padding: 5px 10px;"         // 按鈕內邊距
+                               "border-radius: 5px;"        // 圓角邊框
+                               "}");
     connect(clearButton, &QPushButton::clicked, canvas, &Canvas::clearCanvas);
     controls->addWidget(clearButton);
     clearButton->hide();
 
     // 開始遊戲按鈕
     startButton = new QPushButton("開始遊戲", this);
+    startButton->setStyleSheet("QPushButton {"
+                               "border: 2px solid white;"   // 白色邊框
+                               "background-color: yellow;"  // 黃色背景
+                               "color: black;"              // 黑色文字
+                               "font-size: 80px;"           // 文字大小
+                               "padding: 5px 10px;"         // 按鈕內邊距
+                               "border-radius: 5px;"        // 圓角邊框
+                               "}");
     connect(startButton, &QPushButton::clicked, this, &MainWindow::startGame);
+
 
     // 佈局
     auto *centralWidget = new QWidget();
@@ -367,7 +418,8 @@ void MainWindow::showSummary() {
         if (parts.size() < 4) continue;
 
         QString imageFile = parts[0].split(":").last().trimmed();
-        QString predictedClass = parts[1].split(":").last().trimmed();  // 獲取 Predicted Class
+        QString predictedClass = parts[0].split(":").last().trimmed();  // 獲取 Predicted Class
+        predictedClass.remove(".png");
         QString result = parts[3].split(":").last().trimmed();
 
         QString questionNumber = QString("第 %1 題").arg(i + 1);
@@ -381,35 +433,92 @@ void MainWindow::showSummary() {
         } else {
             imageLabel->setText("無法加載圖片");
         }
+        imageLabel->setAlignment(Qt::AlignCenter);  // 圖片居中顯示
 
-        // 題目標籤
+        // 顯示題號標籤
         QLabel *questionLabel = new QLabel(questionNumber, summaryDialog);
         questionLabel->setAlignment(Qt::AlignCenter);
+        questionLabel->setStyleSheet(
+            "font-size: 16px; "
+            "font-weight: bold; "
+            "color: #4CAF50; "  // 顯示綠色
+            "padding: 8px; "
+            "border: 2px solid #4CAF50; "
+            "border-radius: 5px; "
+            "background-color: #e8f5e9;"  // 淺綠色背景
+            );
 
-        // 顯示題目
+        // 顯示題目名稱
         QLabel *titleLabel = new QLabel(QString("題目：%1").arg(predictedClass), summaryDialog);
         titleLabel->setAlignment(Qt::AlignCenter);
+        titleLabel->setStyleSheet(
+            "font-size: 14px; "
+            "font-weight: bold; "
+            "color: White; "  // 顯示深灰色字體
+            "padding: 5px;"
+            );
 
-        // 答案標籤
+        // 顯示答案標籤
         QString resultText = result == "yes" ? "正確" : "錯誤";
         QLabel *resultLabel = new QLabel(resultText, summaryDialog);
         resultLabel->setAlignment(Qt::AlignCenter);
+        resultLabel->setStyleSheet(
+            result == "yes" ?
+                "font-size: 14px; "
+                "color: white; "
+                "background-color: green; "  // 正確顯示綠色背景
+                "border-radius: 5px; "
+                "padding: 8px;" :
+                "font-size: 14px; "
+                "color: white; "
+                "background-color: red; "  // 錯誤顯示紅色背景
+                "border-radius: 5px; "
+                "padding: 8px;"
+            );
 
-        // 添加到佈局
-        int row = i / 2;  // 行數
-        int col = i % 2;  // 列數
-        gridLayout->addWidget(questionLabel, row * 3, col);        // 題目標籤
-        gridLayout->addWidget(titleLabel, row * 4 + 1, col);     // 題目名稱
-        gridLayout->addWidget(imageLabel, row * 3 + 1, col);      // 圖片
-        gridLayout->addWidget(resultLabel, row * 3 + 2, col);     // 答案
+
+        // 外圍布局調整
+        QVBoxLayout *vLayout = new QVBoxLayout();
+        vLayout->addWidget(questionLabel);
+        vLayout->addWidget(titleLabel);
+        vLayout->addWidget(imageLabel);
+        vLayout->addWidget(resultLabel);
+        vLayout->setSpacing(10);  // 控制元素之間的間距
+        vLayout->setAlignment(Qt::AlignCenter);  // 垂直布局居中
+
+        // 外圍容器
+        QWidget *questionWidget = new QWidget();
+        questionWidget->setLayout(vLayout);
+
+        // 添加到 Grid Layout 中
+        int row = i / 3;  // 行數
+        int col = i % 3;  // 列數
+        gridLayout->addWidget(questionWidget, row, col);
     }
+
 
     mainLayout->addLayout(gridLayout);
 
     // 添加按鈕
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     QPushButton *playAgainButton = new QPushButton("再玩一局", summaryDialog);
+    playAgainButton->setStyleSheet("QPushButton {"
+                                   "border: 2px solid white;"   // 白色邊框
+                                   "background-color: yellow;"  // 黃色背景
+                                   "color: black;"              // 黑色文字
+                                   "font-size: 20px;"           // 文字大小
+                                   "padding: 5px 10px;"         // 按鈕內邊距
+                                   "border-radius: 5px;"        // 圓角邊框
+                                   "}");
     QPushButton *exitButton = new QPushButton("結束遊戲", summaryDialog);
+    exitButton->setStyleSheet("QPushButton {"
+                              "border: 2px solid white;"   // 白色邊框
+                              "background-color: yellow;"  // 黃色背景
+                              "color: black;"              // 黑色文字
+                              "font-size: 20px;"           // 文字大小
+                              "padding: 5px 10px;"         // 按鈕內邊距
+                              "border-radius: 5px;"        // 圓角邊框
+                              "}");
 
     connect(playAgainButton, &QPushButton::clicked, this, [this, summaryDialog]() {
         clearResults();  // 清空結果文件與資料夾
