@@ -9,8 +9,6 @@
 由Google開發的一款線上遊戲，玩法是由玩家按所給題目繪出圖形，同時由人工神經網絡來猜測圖形所代表的內容，猜中即為成功。
 - 開發目標
 利用 Qt ，實現一個結合畫布繪製與 AI 圖像分類的桌面應用程式。
-![image](https://github.com/user-attachments/assets/07bce1d3-81b1-4aff-8f61-721eea7195d3)
-
 
 
 ### 功能概述
